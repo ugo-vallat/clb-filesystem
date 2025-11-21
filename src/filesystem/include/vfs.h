@@ -11,7 +11,13 @@
 
 typedef enum {
     VFS_OK,
-    VFS_ERROR,
+    VFS_INVALID_PATH,
+    VFS_INVALID_FD,
+    VFS_INVALID_PATH_DIR,
+    VFS_INVALID_PATH_FILE,
+    VFS_MAX_FD_REACHED,
+    VFS_MEMORY_FULL,
+    VFS_UNKWON_ERROR,
 
 } vfs_error;
 
@@ -78,9 +84,6 @@ vfs_error append_file(fd_t *fd);
 
 
 
-
-
-
 /**
  * @brief Create a dir object
  * 
@@ -103,7 +106,7 @@ vfs_error delete_dir(path_t dir);
  * @param fd 
  * @return vfs_error 
  */
-vfs_error read_dir(fd_t *fd);
+vfs_error read_dir(path_t dir);
 
 
 
