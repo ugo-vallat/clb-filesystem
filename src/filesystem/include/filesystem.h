@@ -1,0 +1,51 @@
+#ifndef __FILESYSTEM_H__
+#define __FILESYSTEM_H__
+
+//#define BSIZE 512
+//#define NDIRECT 8
+
+#define FS_NPAGES 128
+#define FS_SIZE (FS_NPAGES * BSIZE)
+
+
+#define MAX_SIZE_NAME 16
+
+typedef enum TYPE_FILE {
+    FILE,
+    FOLDER,
+    EMPTY
+} TYPE_FILE;
+
+typedef enum PERMISSION {
+  WRITABLE = 1,
+  READABLE = 2
+} PERMISSION;
+
+typedef struct superblock {
+    unsigned size;          //number file system blocks
+    unsigned nbr_block;     //number of data blocks
+    unsigned nbr_inodes;    //number of inodes
+    unsigned first_inode;   //first block for inodes
+    unsigned bitmap;     //first available block for bitmap
+} superblock_t;
+
+
+// in-memory copy of an inode
+typedef struct inode {
+  int ref;            // Reference count
+  TYPE_FILE type;     // type of element inode
+  unsigned size;     
+  struct inode* father;
+  struct inode* brother;
+  struct inode* first_son;
+  char name[MAX_SIZE_NAME];
+}inode;
+
+inode inodes_table[FS_NPAGES];
+//char bitmap;
+
+void init_fs();
+int alloc_inode(char name[MAX_SIZE_NAME], inode* father, TYPE_FILE type);
+void free_inode(int i);
+
+#endif
