@@ -31,21 +31,27 @@ typedef struct superblock {
 
 
 // in-memory copy of an inode
-typedef struct inode {
+typedef struct RAM_inode {
+  int id;
   int ref;            // Reference count
   TYPE_FILE type;     // type of element inode
   unsigned size;     
-  struct inode* father;
-  struct inode* brother;
-  struct inode* first_son;
+  struct RAM_inode* father;
+  struct RAM_inode* brother;
+  struct RAM_inode* first_son;
   char name[MAX_SIZE_NAME];
+  unsigned data_block;    //pointer of the Memory block
 }inode;
 
-inode inodes_table[FS_NPAGES];
+inode RAM_inodes_table[FS_NPAGES];
 //char bitmap;
 
 void init_fs();
 int alloc_inode(char name[MAX_SIZE_NAME], inode* father, TYPE_FILE type);
 void free_inode(int i);
+int write_inode(int inode, const char* data);
+int read(int inode, int pos, int size);
+int reset(int inode);
+
 
 #endif
