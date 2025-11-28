@@ -46,12 +46,56 @@ typedef struct RAM_inode {
 inode RAM_inodes_table[FS_NPAGES];
 //char bitmap;
 
+
 void init_fs();
+
+/**
+ * @brief Create a Inode to create a file or folder.
+ * return a inode id, if there is an error return -1
+ * 
+ * @param name 
+ * @param father 
+ * @param type 
+ * @return int 
+ */
 int alloc_inode(char name[MAX_SIZE_NAME], inode* father, TYPE_FILE type);
-void free_inode(int i);
+
+/**
+ * @brief Destroy a file or folder, return 1 on success return 0 on failure
+ * 
+ * @param i 
+ */
+int free_inode(int i);
+
+/**
+ * @brief Write on the datablock of the inode.
+ * return the number of bytes written in the file
+ * 
+ * @param inode 
+ * @param data 
+ * @return int 
+ */
 int write_inode(int inode, const char* data);
-int read(int inode, int pos, int size);
-int reset(int inode);
+
+/**
+ * @brief Read a datablock of the inode.
+ * Return the number of bytes read in the file
+ * 
+ * @param inode 
+ * @param pos 
+ * @param size 
+ * @param buff_dest 
+ * @return int 
+ */
+int read_inode(int inode, int pos, int size, char* buff_dest);
+
+/**
+ * @brief Clear all data bytes in the file
+ * 
+ * @param inode 
+ * @return int 
+ */
+int reset_inode(int inode);
 
 
 #endif
