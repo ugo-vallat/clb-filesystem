@@ -73,9 +73,10 @@ int free_inode(int i);
  * 
  * @param inode 
  * @param data 
+ * @param size
  * @return int 
  */
-int write_inode(int inode, const char* data);
+int write_inode(int inode, const char* data, int size);
 
 /**
  * @brief Read a datablock of the inode.
