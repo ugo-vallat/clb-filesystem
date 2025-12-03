@@ -6,6 +6,7 @@
 
 #define FS_NPAGES 128
 #define FS_SIZE (FS_NPAGES * BSIZE)
+#define PAGE_SIZE 512*8
 
 
 #define MAX_SIZE_NAME 16
