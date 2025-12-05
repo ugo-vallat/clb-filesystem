@@ -1,4 +1,8 @@
-#include "../include/filesystem.h"
+
+
+#define __FILESYSTEM_C__
+#include "../include/filesystem.h" // Don't move this fucking include if u want to stay alive :)
+
 
 int memwrite(unsigned long src, unsigned long dst, unsigned long n);
 
