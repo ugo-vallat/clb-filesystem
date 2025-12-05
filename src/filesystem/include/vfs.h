@@ -7,14 +7,13 @@
     -----------------------------
 */
 
-#include <cstddef>
-
 #define BLOCK_SIZE      (512)
 #define FILE_NAME_SIZE  (24)
 #define DIR_NAME_SIZE   (FILE_NAME_SIZE)
 #define INODE_ID_SIZE   (8)
 #define FILE_REF_SIZE   (INODE_ID_SIZE + FILE_NAME_SIZE)
 #define NB_FILES_IN_DIR (BLOCK_SIZE/FILE_REF_SIZE)
+
 
 typedef enum {
     VFS_OK,
@@ -24,12 +23,14 @@ typedef enum {
     VFS_INVALID_PATH_FILE,
     VFS_MAX_FD_REACHED,
     VFS_MEMORY_FULL,
+    VFS_INVALID_NAME,
     VFS_UNKWON_ERROR,
 
 } vfs_error;
 
-typedef struct filedescriptor_s fd_t;
+typedef int fd_t;
 typedef char *path_t;
+
 
 /*
     --------------
