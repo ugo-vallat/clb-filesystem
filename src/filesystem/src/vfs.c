@@ -3,14 +3,13 @@
 #include <printf.h>
 #include <string.h>
 
-#define WARN(...) printf("[VFS]"__VA_ARGS__)
+#define WARN(...) printf("[VFS] "__VA_ARGS__)
 
 inode* parse_path(const path_t path);
 int get_path_first_token(const path_t path);
 inode* get_son_inode(inode* father, char * son_name);
 
 
-inode* current_inodes_table[MAX_OPEN_FILES] = {0};
 static char token[MAX_SIZE_NAME+1];
 
 
@@ -31,6 +30,7 @@ int get_path_first_token(const path_t path) {
     }
 
     WARN("name too long\n");
+    token[0] = '\0';
     return -1;
 }
 
@@ -123,7 +123,42 @@ vfs_error create_file(const path_t path, const char *file) {
     return VFS_OK;
 }
 
-vfs_error delete_file(const path_t path);
+void delete_inode(inode *i) {
+    if(EMPTY == i->type) {
+        WARN("Delete empty inode\n");
+        return;
+    }
+    if(FILE == i->type) {
+        if(free_inode(i->id) != 0) {
+            WARN("Failed to free inode %d\n", i->id);
+        }
+        return;
+    } else {
+        inode *to_delete;
+        /* delete children recursively */
+        while (0 != i->first_son) {
+            to_delete = i->first_son;
+            i->first_son = to_delete->brother;
+            delete_inode(to_delete);
+        }
+        /* delete folder */
+        if(free_inode(i->id) != 0) {
+            WARN("Failed to free inode %d\n", i->id);
+        }
+        return;
+    }
+}
+
+vfs_error delete_file(const path_t path) {
+    inode* to_delete;
+    to_delete = parse_path(path);
+    if(0 == to_delete) {
+        return VFS_INVALID_FD;
+    }
+
+    delete_inode(to_delete);
+    return VFS_OK;
+}
 
 vfs_error open_file(const path_t path, fd_t *fd) {
     inode* file;
@@ -148,7 +183,20 @@ vfs_error open_file(const path_t path, fd_t *fd) {
 }
 
 
-vfs_error close_file(const fd_t *fd);
+vfs_error close_file(const fd_t *fd) {
+    if(0 == fd) {
+        WARN("Null pointer\n");
+        return VFS_INVALID_FD;
+    }
+
+    if(EMPTY == RAM_inodes_table[*fd].type) {
+        WARN("Not allocated file\n");
+        return VFS_INVALID_FD;
+    }
+
+    RAM_inodes_table[*fd].ref--;
+    return VFS_OK;
+}
 
 long read_file(const fd_t *fd, char *str, unsigned len);
 
