@@ -72,7 +72,7 @@ inode* parse_path(const path_t path) {
         }
 
         if(0 == current_inode) {
-            WARN("file not found : %s", token);
+            WARN("file not found : %s\n", token);
             return 0;
         }
 
@@ -84,7 +84,7 @@ inode* parse_path(const path_t path) {
                 return current_inode;
             }
         } else if (EMPTY == current_inode->type) {
-            WARN("Empty node");
+            WARN("Empty node\n");
             return 0;
         }
 
