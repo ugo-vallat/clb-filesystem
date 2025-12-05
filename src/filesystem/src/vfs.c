@@ -125,7 +125,28 @@ vfs_error create_file(const path_t path, const char *file) {
 
 vfs_error delete_file(const path_t path);
 
-vfs_error open_file(const path_t path, fd_t *fd);
+vfs_error open_file(const path_t path, fd_t *fd) {
+    inode* file;
+
+    if(0 == fd) {
+        WARN("Null pointer\n");
+        return VFS_INVALID_FD;
+    }
+    
+    file = parse_path(path);
+    if(0 == file) {
+        return VFS_INVALID_FD;
+    }
+    if(FILE != file->type) {
+        WARN("Not a path to a file\n");
+        return VFS_INVALID_FD;
+    }
+
+    *fd = file->id;
+    file->ref++;
+    return VFS_OK;
+}
+
 
 vfs_error close_file(const fd_t *fd);
 
