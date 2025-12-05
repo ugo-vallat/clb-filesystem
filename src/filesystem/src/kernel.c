@@ -10,7 +10,7 @@
 #include "mini_uart.h"
 #include "sys.h"
 #include "user.h"
-
+#include "filesystem.h"
 
 void kernel_process(){
 	printf("Kernel process started. EL %d\r\n", get_el());
@@ -28,7 +28,7 @@ void kernel_main()
 {
 	uart_init();
 	init_printf(NULL, putc);
-
+	init_fs();
 	printf("kernel boots ...\n\r");
 
 	irq_vector_init();

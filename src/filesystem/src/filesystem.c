@@ -2,6 +2,8 @@
 
 #define __FILESYSTEM_C__
 #include "../include/filesystem.h" // Don't move this fucking include if u want to stay alive :)
+#include "../include/mm.h"
+
 
 
 int memwrite(unsigned long src, unsigned long dst, unsigned long n);
@@ -26,6 +28,32 @@ void copy_str(char *dest, char *src, int size) {
     if (src[i] == '\0') {
       break;
     }
+  }
+}
+
+//init_fs
+//read
+
+void init_fs() {
+
+  //reserve FS_NPAGES for each inode and set root inode
+  for (unsigned i = 0; i < FS_NPAGES; i++) {
+    unsigned block = get_free_page();
+    if (i == 0) {
+      copy_str(RAM_inodes_table[i].name, "/", 1);
+      RAM_inodes_table[i].type = FOLDER;
+    } else {
+      RAM_inodes_table[i].type = EMPTY;
+    }
+
+    RAM_inodes_table[i].id = i;
+    RAM_inodes_table[i].data_block = block;
+
+    RAM_inodes_table[i].brother = (void*)0;
+    RAM_inodes_table[i].father = (void*)0;
+    RAM_inodes_table[i].first_son = (void*)0;
+    RAM_inodes_table[i].size = 0;
+    RAM_inodes_table[i].ref = 0;
   }
 }
 
@@ -83,4 +111,59 @@ int write_inode(int inode, const char *data, int size) {
 
   return written;
   return memwrite(src, dst, size);
+}
+
+int read_inode(int inode, int pos, int size, char* buff_dest) {
+  unsigned long size_to_read = size;
+
+  if (inode < 0 || inode >= FS_NPAGES)
+    return -1;
+
+  if (RAM_inodes_table[inode].type != FILE)
+    return -2;
+
+  if (pos + size >= RAM_inodes_table[inode].size)
+    size_to_read = RAM_inodes_table[inode].size - pos;
+
+
+  unsigned long start_pos = RAM_inodes_table[inode].data_block + pos;
+  unsigned long end_pos = start_pos + size;
+
+  if (end_pos >= RAM_inodes_table[inode].data_block + FS_NPAGES)
+    size_to_read = (RAM_inodes_table[inode].data_block + FS_NPAGES) - start_pos;
+  
+  memcpy(start_pos, buff_dest, size_to_read);
+  
+  return size_to_read;
+}
+
+
+int free_inode(int inode) {
+   if (inode < 0 || inode >= FS_NPAGES)
+    return -1;
+
+    if (RAM_inodes_table[inode].type == FOLDER && RAM_inodes_table[inode].first_son != (void*)0)
+      return -2; //impossible to destroy a folder with element inside
+    
+    struct RAM_inode* brother = RAM_inodes_table[inode].brother;
+    struct RAM_inode* father = RAM_inodes_table[inode].father;
+    struct RAM_inode* first_son = RAM_inodes_table[inode].first_son;
+
+    if (father->first_son == &RAM_inodes_table[inode])
+      father->first_son = brother;
+
+    struct RAM_inode* next_child = father->first_son;
+    while(next_child != (void*)0) {
+      if (next_child->brother == &RAM_inodes_table[inode])
+        next_child->brother = brother;
+        break;
+    }
+
+    RAM_inodes_table[inode].brother = (void*)0;
+    RAM_inodes_table[inode].father = (void*)0;
+    RAM_inodes_table[inode].size = 0;
+    RAM_inodes_table[inode].ref = 0;
+    RAM_inodes_table[inode].type = EMPTY;
+
+    return 0;
 }

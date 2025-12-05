@@ -51,7 +51,10 @@ extern inode RAM_inodes_table[FS_NPAGES];
 #endif // __FILESYSTEM_C__
 //char bitmap;
 
-
+/**
+ * @brief Initialization of RAM inodes array with the first element root
+ * 
+ */
 void init_fs();
 
 /**
@@ -68,9 +71,9 @@ int alloc_inode(char name[MAX_SIZE_NAME], inode* father, TYPE_FILE type);
 /**
  * @brief Destroy a file or folder, return 1 on success return 0 on failure
  * 
- * @param i 
+ * @param inode
  */
-int free_inode(int i);
+int free_inode(int inode);
 
 /**
  * @brief Write on the datablock of the inode.
@@ -86,6 +89,11 @@ int write_inode(int inode, const char* data, int size);
 /**
  * @brief Read a datablock of the inode.
  * Return the number of bytes read in the file
+ * 
+ * if the function returns -1, the inode is out of range of the inodes array
+ * if the function returns -2, the inode is not a file to read 
+ * 
+ * The value reads is save in the buff_dest
  * 
  * @param inode 
  * @param pos 
