@@ -91,59 +91,19 @@ vectors:
 	ventry	error_invalid_el1t			// Error EL1t
 
 	ventry	sync_invalid_el1h			// Synchronous EL1h
-	ventry	el1_irq					// IRQ EL1h
+	ventry	el1_irq						// IRQ EL1h
 	ventry	fiq_invalid_el1h			// FIQ EL1h
 	ventry	error_invalid_el1h			// Error EL1h
 
-	ventry	el0_sync				// Synchronous 64-bit EL0
-	ventry	el0_irq					// IRQ 64-bit EL0
+	ventry	el0_sync					// Synchronous 64-bit EL0
+	ventry	el0_irq						// IRQ 64-bit EL0
 	ventry	fiq_invalid_el0_64			// FIQ 64-bit EL0
-	ventry	error_invalid_el0_64			// Error 64-bit EL0
+	ventry	error_invalid_el0_64		// Error 64-bit EL0
 
 	ventry	sync_invalid_el0_32			// Synchronous 32-bit EL0
 	ventry	irq_invalid_el0_32			// IRQ 32-bit EL0
 	ventry	fiq_invalid_el0_32			// FIQ 32-bit EL0
-	ventry	error_invalid_el0_32			// Error 32-bit EL0
-
-sync_invalid_el1t:
-	handle_invalid_entry 1, SYNC_INVALID_EL1t
-
-irq_invalid_el1t:
-	handle_invalid_entry 1, IRQ_INVALID_EL1t
-
-fiq_invalid_el1t:
-	handle_invalid_entry 1, FIQ_INVALID_EL1t
-
-error_invalid_el1t:
-	handle_invalid_entry 1, ERROR_INVALID_EL1t
-
-sync_invalid_el1h:
-	handle_invalid_entry 1, SYNC_INVALID_EL1h
-
-fiq_invalid_el1h:
-	handle_invalid_entry 1, FIQ_INVALID_EL1h
-
-error_invalid_el1h:
-	handle_invalid_entry 1, ERROR_INVALID_EL1h
-
-fiq_invalid_el0_64:
-	handle_invalid_entry 0, FIQ_INVALID_EL0_64
-
-error_invalid_el0_64:
-	handle_invalid_entry 0, ERROR_INVALID_EL0_64
-
-sync_invalid_el0_32:
-	handle_invalid_entry  0, SYNC_INVALID_EL0_32
-
-irq_invalid_el0_32:
-	handle_invalid_entry  0, IRQ_INVALID_EL0_32
-
-fiq_invalid_el0_32:
-	handle_invalid_entry  0, FIQ_INVALID_EL0_32
-
-error_invalid_el0_32:
-	handle_invalid_entry  0, ERROR_INVALID_EL0_32
-
+	ventry	error_invalid_el0_32		// Error 32-bit EL0
 
 el1_irq:
 	kernel_entry 1
@@ -198,6 +158,45 @@ el0_da:
 1:
 	bl disable_irq
 	kernel_exit 0
+
+sync_invalid_el1t:
+	handle_invalid_entry 1, SYNC_INVALID_EL1t
+
+irq_invalid_el1t:
+	handle_invalid_entry 1, IRQ_INVALID_EL1t
+
+fiq_invalid_el1t:
+	handle_invalid_entry 1, FIQ_INVALID_EL1t
+
+error_invalid_el1t:
+	handle_invalid_entry 1, ERROR_INVALID_EL1t
+
+sync_invalid_el1h:
+	handle_invalid_entry 1, SYNC_INVALID_EL1h
+
+fiq_invalid_el1h:
+	handle_invalid_entry 1, FIQ_INVALID_EL1h
+
+error_invalid_el1h:
+	handle_invalid_entry 1, ERROR_INVALID_EL1h
+
+fiq_invalid_el0_64:
+	handle_invalid_entry 0, FIQ_INVALID_EL0_64
+
+error_invalid_el0_64:
+	handle_invalid_entry 0, ERROR_INVALID_EL0_64
+
+sync_invalid_el0_32:
+	handle_invalid_entry  0, SYNC_INVALID_EL0_32
+
+irq_invalid_el0_32:
+	handle_invalid_entry  0, IRQ_INVALID_EL0_32
+
+fiq_invalid_el0_32:
+	handle_invalid_entry  0, FIQ_INVALID_EL0_32
+
+error_invalid_el0_32:
+	handle_invalid_entry  0, ERROR_INVALID_EL0_32
 
 .globl ret_from_fork
 ret_from_fork:

@@ -2,6 +2,7 @@
 #include <stdint.h>
 
 #include "printf.h"
+#include "user_sys.h"
 #include "utils.h"
 #include "timer.h"
 #include "irq.h"
@@ -42,6 +43,7 @@ void kernel_main()
 		printf("error while starting kernel process");
 		return;
 	}
+
 
 	while (1){
 		schedule();

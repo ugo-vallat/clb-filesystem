@@ -7,8 +7,6 @@
     -----------------------------
 */
 
-#include <cstddef>
-
 #define BLOCK_SIZE      (512)
 #define FILE_NAME_SIZE  (24)
 #define DIR_NAME_SIZE   (FILE_NAME_SIZE)
