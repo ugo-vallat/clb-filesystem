@@ -9,7 +9,11 @@
 #define PAGE_SIZE 512*8
 
 
-#define MAX_SIZE_NAME 16
+#define MAX_SIZE_NAME   16
+#define ROOT_INODE      0
+#define INVALID_INODE   (-1)
+
+typedef int inode_id;
 
 typedef enum TYPE_FILE {
     FILE,
@@ -33,7 +37,7 @@ typedef struct superblock {
 
 // in-memory copy of an inode
 typedef struct RAM_inode {
-  int id;
+  inode_id id;
   int ref;            // Reference count
   TYPE_FILE type;     // type of element inode
   unsigned size;     
