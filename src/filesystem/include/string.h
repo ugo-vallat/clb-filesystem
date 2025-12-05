@@ -8,5 +8,7 @@ char* strcat(char *dst, char *src);
 
 int strcmp(char *dst, char *src);
 
+int strlen(char *src);
+
 
 #endif // __STRING_H__

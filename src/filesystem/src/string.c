@@ -1,8 +1,57 @@
 #include <string.h>
 
 
-void strcpy(char *dst, char *src);
+char* strcpy(char *dst, char *src)
+{
+    int i = 0;
+    while (src[i] != '\0') {
+        dst[i] = src[i];
+        i++;
+    }
+    dst[i] = '\0';
+    return dst;
+}
 
-void strcat(char *dst, char *src);
 
-void strcmp(char *dst, char *src);
+char* strcat(char *dst, char *src)
+{
+    int i = 0;
+    int j = 0;
+
+
+    while (dst[i] != '\0')
+        i++;
+
+
+    while (src[j] != '\0') {
+        dst[i] = src[j];
+        i++;
+        j++;
+    }
+
+    dst[i] = '\0';
+    return dst;
+}
+
+
+int strcmp(char *dst, char *src)
+{
+    int i = 0;
+    while (dst[i] != '\0' && src[i] != '\0') {
+        if (dst[i] != src[i])
+            return dst[i] - src[i];
+        i++;
+    }
+    return dst[i] - src[i];
+}
+
+
+int strlen(char *src)
+{
+    int i = 0;
+    while (src[i] != '\0') {
+        i++;
+    }
+    return i;
+}
+
