@@ -44,7 +44,11 @@ typedef struct RAM_inode {
   unsigned data_block;    //pointer of the Memory block
 }inode;
 
+#ifdef __FILESYSTEM_C__
 inode RAM_inodes_table[FS_NPAGES];
+#else // __FILESYSTEM_C__
+extern inode RAM_inodes_table[FS_NPAGES];
+#endif // __FILESYSTEM_C__
 //char bitmap;
 
 
