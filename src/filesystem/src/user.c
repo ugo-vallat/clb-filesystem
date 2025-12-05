@@ -16,17 +16,18 @@ void loop(char* str)
 
 void user_process()
 {
-	call_sys_write("User process\n\r");
-	int pid = call_sys_fork();
-	if (pid < 0) {
-		call_sys_write("Error during fork\n\r");
-		call_sys_exit();
-		return;
-	}
-	if (pid == 0){
-		loop("abcde");
-	} else {
-		loop("12345");
-	}
+	call_sys_write("User process, starting the call to the VFS :\n\r");
+
+	call_create_file();
+	call_delete_file();
+	call_open_file();
+	call_close_file();
+	call_read_file();
+	call_write_file();
+	call_append_file();
+	
+	call_create_dir();
+	call_delete_dir();
+	call_read_dir();
 }
 
