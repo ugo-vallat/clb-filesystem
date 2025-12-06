@@ -240,22 +240,22 @@ vfs_error close_file(fd_t *fd) {
 long read_file(const fd_t *fd, char *str, unsigned len) {
     if(0 == fd || 0 == str) {
         WARN("Null pointer\n");
-        return VFS_NULL_POINTER;
+        return -1;
     }
 
     if(0 > *fd) {
         WARN("Invalid fd\n");
-        return VFS_INVALID_FD;
+        return -1;
     }
 
     if(0 == open_files[*fd].inode) {
         WARN("File not open\n");
-        return VFS_INVALID_FD;
+        return -1;
     }
 
     if(FILE != open_files[*fd].inode->type) {
         WARN("File not readable\n");
-        return VFS_INVALID_FD;
+        return -1;
     }
 
     if(open_files[*fd].next >= open_files[*fd].inode->size || 0 == len) {
@@ -267,13 +267,56 @@ long read_file(const fd_t *fd, char *str, unsigned len) {
 }
 
 long write_file(const fd_t *fd, const char *str, unsigned len) {
-    WARN("write_file not implemented yet\n");
-    return -1;
+    if(0 == fd || 0 == str) {
+        WARN("Null pointer\n");
+        return -1;
+    }
+
+    if(0 > *fd) {
+        WARN("Invalid fd\n");
+        return -1;
+    }
+
+    if(0 == open_files[*fd].inode) {
+        WARN("File not open\n");
+        return -1;
+    }
+
+    if(FILE != open_files[*fd].inode->type) {
+        WARN("File not readable\n");
+        return -1;
+    }
+
+    if (0 != reset_inode(open_files[*fd].inode->id)) {
+        WARN("Failed to reset file\n");
+        return -1;
+    }
+
+    return write_inode(open_files[*fd].inode->id, str, len);
 }
 
 long append_file(fd_t *fd, const char *str, unsigned len) {
-    WARN("append_file not implemented yet\n");
-    return -1;
+    if(0 == fd || 0 == str) {
+        WARN("Null pointer\n");
+        return -1;
+    }
+
+    if(0 > *fd) {
+        WARN("Invalid fd\n");
+        return -1;
+    }
+
+    if(0 == open_files[*fd].inode) {
+        WARN("File not open\n");
+        return -1;
+    }
+
+    if(FILE != open_files[*fd].inode->type) {
+        WARN("File not readable\n");
+        return -1;
+    }
+
+    return write_inode(open_files[*fd].inode->id, str, len);
 }
 
 
