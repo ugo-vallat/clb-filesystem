@@ -326,14 +326,52 @@ long append_file(fd_t *fd, const char *str, unsigned len) {
     -------------------
 */
 
-vfs_error create_dir(path_t path, char *dir) {
-    WARN("create_dir not implemented yet\n");
-    return VFS_UNKWON_ERROR;
+vfs_error create_dir(path_t path, char *dir_name) {
+    inode* dir;
+    inode_id new_inode;
+
+    if(0 == path || 0 == dir_name) {
+        WARN("Null pointer\n");
+        return VFS_NULL_POINTER;
+    }
+
+    if('\0' == dir_name[0] || strlen(dir_name) > MAX_SIZE_NAME) {
+        WARN("Invalid folder name\n");
+        return VFS_INVALID_NAME;
+    }
+    
+    dir = parse_path(path);
+    if(0 == dir) {
+        return VFS_INVALID_FD;
+    }
+    if(FOLDER != dir->type) {
+        WARN("Parent folder is not a folder\n");
+        return VFS_INVALID_FD;
+    }
+
+    new_inode = alloc_inode(dir_name, dir, FOLDER);
+    if(new_inode < 0) {
+        return VFS_MEMORY_FULL;
+    }
+
+    return VFS_OK;
 }
 
-vfs_error delete_dir(path_t dir) {
-    WARN("delete_dir not implemented yet\n");
-    return VFS_UNKWON_ERROR;
+vfs_error delete_dir(path_t path) {
+    inode* to_delete;
+    
+    if(0 == path) {
+        WARN("Null pointer\n");
+        return VFS_NULL_POINTER;
+    }
+
+    to_delete = parse_path(path);
+    if(0 == to_delete) {
+        return VFS_INVALID_FD;
+    }
+
+    delete_inode(to_delete);
+    return VFS_OK;
 }
 
 vfs_error read_dir(path_t dir, char **files[FILE_NAME_SIZE], unsigned *nb_entries) {
