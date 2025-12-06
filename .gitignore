@@ -12,6 +12,8 @@ src/*/build
 **/*.list
 **/*.cmd
 
+**/*.cache
+
 /.vscode/*
 
 *.json
