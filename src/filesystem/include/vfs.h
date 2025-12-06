@@ -117,18 +117,18 @@ long append_file(fd_t *fd, const char *str, unsigned len);
  * @brief Create a dir object
  * 
  * @param[in] path Path to parent directory
- * @param[in] dir Name of new directory
+ * @param[in] dir_name Name of new directory
  * @return vfs_error 
  */
-vfs_error create_dir(path_t path, char *dir);
+vfs_error create_dir(path_t path, char *dir_name);
 
 /**
  * @brief delete a dir object
  * 
- * @param[in] dir Path to the directory to delete
+ * @param[in] path Path to the directory to delete
  * @return vfs_error 
  */
-vfs_error delete_dir(path_t dir);
+vfs_error delete_dir(path_t path);
 
 /**
  * @brief read a dire object, to list current files in the dir
