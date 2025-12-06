@@ -9,7 +9,11 @@
 #define PAGE_SIZE 512*8
 
 
-#define MAX_SIZE_NAME 16
+#define MAX_SIZE_NAME   16
+#define ROOT_INODE      0
+#define INVALID_INODE   (-1)
+
+typedef int inode_id;
 
 typedef enum TYPE_FILE {
     FILE,
@@ -33,7 +37,7 @@ typedef struct superblock {
 
 // in-memory copy of an inode
 typedef struct RAM_inode {
-  int id;
+  inode_id id;
   int ref;            // Reference count
   TYPE_FILE type;     // type of element inode
   unsigned size;     
@@ -64,19 +68,22 @@ void init_fs();
  * @param name 
  * @param father 
  * @param type 
- * @return int 
+ * @return inode_id
  */
-int alloc_inode(char name[MAX_SIZE_NAME], inode* father, TYPE_FILE type);
+inode_id alloc_inode(char name[MAX_SIZE_NAME], inode* father, TYPE_FILE type);
 
 /**
  * @brief Destroy a file or folder, return 1 on success return 0 on failure
- * 
+ * failed if the folder is not empty 
+ *
  * @param inode
+ * @return int
  */
-int free_inode(int inode);
+int free_inode(inode_id inode);
+
 
 /**
- * @brief Write on the datablock of the inode.
+ * @brief Write on the datablock of the inode. Append the element at the end of the datablock.
  * return the number of bytes written in the file
  * 
  * @param inode 
@@ -84,7 +91,7 @@ int free_inode(int inode);
  * @param size
  * @return int 
  */
-int write_inode(int inode, const char* data, int size);
+int write_inode(inode_id inode, const char* data, int size);
 
 /**
  * @brief Read a datablock of the inode.
@@ -101,15 +108,16 @@ int write_inode(int inode, const char* data, int size);
  * @param buff_dest 
  * @return int 
  */
-int read_inode(int inode, int pos, int size, char* buff_dest);
+int read_inode(inode_id inode, int pos, int size, char* buff_dest);
 
 /**
- * @brief Clear all data bytes in the file
+ * @brief Clear all data bytes of the datablock.
+ * Return 0, if there is a error return -1
  * 
  * @param inode 
  * @return int 
  */
-int reset_inode(int inode);
+int reset_inode(inode_id inode);
 
 
 #endif

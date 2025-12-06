@@ -8,7 +8,7 @@
 
 int memwrite(unsigned long src, unsigned long dst, unsigned long n);
 
-int find_last_child(inode *father) {
+inode_id find_last_child(inode *father) {
   if (father == 0)
     return -1;
 
@@ -57,7 +57,7 @@ void init_fs() {
   }
 }
 
-int alloc_inode(char name[MAX_SIZE_NAME], inode *father, TYPE_FILE type) {
+inode_id alloc_inode(char name[MAX_SIZE_NAME], inode *father, TYPE_FILE type) {
 
   for (int i = 0; i < FS_NPAGES; i++) {
     if (RAM_inodes_table[i].type == EMPTY) {
@@ -81,7 +81,7 @@ int alloc_inode(char name[MAX_SIZE_NAME], inode *father, TYPE_FILE type) {
   return -1;
 }
 
-int reset_inode(int inode) {
+int reset_inode(inode_id inode) {
   if (RAM_inodes_table[inode].type != FILE) {
     return -1;
   }
@@ -90,7 +90,7 @@ int reset_inode(int inode) {
   return 0;
 }
 
-int write_inode(int inode, const char *data, int size) {
+int write_inode(inode_id inode, const char *data, int size) {
   if (RAM_inodes_table[inode].type != FILE) {
     return -1;
   }
@@ -113,7 +113,7 @@ int write_inode(int inode, const char *data, int size) {
   return memwrite(src, dst, size);
 }
 
-int read_inode(int inode, int pos, int size, char* buff_dest) {
+int read_inode(inode_id inode, int pos, int size, char* buff_dest) {
   unsigned long size_to_read = size;
 
   if (inode < 0 || inode >= FS_NPAGES)
@@ -138,7 +138,7 @@ int read_inode(int inode, int pos, int size, char* buff_dest) {
 }
 
 
-int free_inode(int inode) {
+int free_inode(inode_id inode) {
    if (inode < 0 || inode >= FS_NPAGES)
     return -1;
 
