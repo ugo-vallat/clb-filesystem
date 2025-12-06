@@ -6,6 +6,7 @@
 
 #define FS_NPAGES 128
 #define FS_SIZE (FS_NPAGES * BSIZE)
+#define PAGE_SIZE 512*8
 
 
 #define MAX_SIZE_NAME   16
@@ -76,9 +77,10 @@ inode_id alloc_inode(char name[MAX_SIZE_NAME], inode* father, TYPE_FILE type);
  * failed if the folder is not empty 
  *
  * @param inode
- * @return inode_id
+ * @return int
  */
-inode_id free_inode(inode_id inode);
+int free_inode(inode_id inode);
+
 
 /**
  * @brief Write on the datablock of the inode. Append the element at the end of the datablock.
@@ -94,6 +96,11 @@ int write_inode(inode_id inode, const char* data, int size);
 /**
  * @brief Read a datablock of the inode.
  * Return the number of bytes read in the file
+ * 
+ * if the function returns -1, the inode is out of range of the inodes array
+ * if the function returns -2, the inode is not a file to read 
+ * 
+ * The value reads is save in the buff_dest
  * 
  * @param inode 
  * @param pos 
