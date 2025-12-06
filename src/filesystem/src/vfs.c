@@ -8,11 +8,16 @@
 inode* parse_path(const path_t path);
 int get_path_first_token(const path_t path);
 inode* get_son_inode(inode* father, char * son_name);
+void delete_inode(inode *i);
+fd_t get_next_fd(void);
 
+typedef struct file_descriptor {
+    inode* inode;       // inode of the file
+    unsigned int next;  // next character to read 
+} file_descriptor_t;
 
 static char token[MAX_SIZE_NAME+1];
-
-
+file_descriptor_t open_files[MAX_OPEN_FILES];
 
 int get_path_first_token(const path_t path) {
     
@@ -96,10 +101,24 @@ inode* parse_path(const path_t path) {
     }
 }
 
+fd_t get_next_fd(void) {
+    for(fd_t fd = 0; fd < MAX_OPEN_FILES; fd++) {
+        if(0 == open_files[fd].inode) {
+            return fd;
+        }
+    }
+    WARN("No fd available\n");
+    return -1;
+}
 
 vfs_error create_file(const path_t path, const char *file) {
     inode* dir;
     inode_id new_inode;
+
+    if(0 == path || 0 == file) {
+        WARN("Null pointer\n");
+        return VFS_NULL_POINTER;
+    }
 
     if('\0' == file[0] || strlen(file) > MAX_SIZE_NAME) {
         WARN("Invalid file name\n");
@@ -151,6 +170,12 @@ void delete_inode(inode *i) {
 
 vfs_error delete_file(const path_t path) {
     inode* to_delete;
+    
+    if(0 == path) {
+        WARN("Null pointer\n");
+        return VFS_NULL_POINTER;
+    }
+
     to_delete = parse_path(path);
     if(0 == to_delete) {
         return VFS_INVALID_FD;
@@ -165,7 +190,13 @@ vfs_error open_file(const path_t path, fd_t *fd) {
 
     if(0 == fd) {
         WARN("Null pointer\n");
-        return VFS_INVALID_FD;
+        return VFS_NULL_POINTER;
+    }
+
+    *fd = get_next_fd();
+    if(*fd < 0) {
+        *fd = -1;
+        return VFS_MAX_FD_REACHED;
     }
     
     file = parse_path(path);
@@ -176,29 +207,64 @@ vfs_error open_file(const path_t path, fd_t *fd) {
         WARN("Not a path to a file\n");
         return VFS_INVALID_FD;
     }
-
-    *fd = file->id;
+    open_files[*fd].inode = file;
+    open_files[*fd].next = 0;
     file->ref++;
     return VFS_OK;
 }
 
 
-vfs_error close_file(const fd_t *fd) {
+vfs_error close_file(fd_t *fd) {
     if(0 == fd) {
         WARN("Null pointer\n");
+        return VFS_NULL_POINTER;
+    }
+
+    if(0 > *fd) {
+        WARN("Invalid fd\n");
         return VFS_INVALID_FD;
     }
 
-    if(EMPTY == RAM_inodes_table[*fd].type) {
-        WARN("Not allocated file\n");
+    if(0 == open_files[*fd].inode) {
+        WARN("File not open\n");
+        *fd = -1;
         return VFS_INVALID_FD;
     }
-
-    RAM_inodes_table[*fd].ref--;
+    open_files[*fd].inode->ref--;
+    open_files[*fd].inode = 0;
+    open_files[*fd].next = 0;
+    *fd = -1;
     return VFS_OK;
 }
 
-long read_file(const fd_t *fd, char *str, unsigned len);
+long read_file(const fd_t *fd, char *str, unsigned len) {
+    if(0 == fd || 0 == str) {
+        WARN("Null pointer\n");
+        return VFS_NULL_POINTER;
+    }
+
+    if(0 > *fd) {
+        WARN("Invalid fd\n");
+        return VFS_INVALID_FD;
+    }
+
+    if(0 == open_files[*fd].inode) {
+        WARN("File not open\n");
+        return VFS_INVALID_FD;
+    }
+
+    if(FILE != open_files[*fd].inode->type) {
+        WARN("File not readable\n");
+        return VFS_INVALID_FD;
+    }
+
+    if(open_files[*fd].next >= open_files[*fd].inode->size || 0 == len) {
+        str[0] = '\0';
+        return 0;
+    }
+
+    return (long) read_inode(open_files[*fd].inode->id, open_files[*fd].next, len, str);
+}
 
 long write_file(const fd_t *fd, const char *str, unsigned len);
 
