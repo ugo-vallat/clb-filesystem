@@ -14,6 +14,8 @@
 #define FILE_REF_SIZE   (INODE_ID_SIZE + FILE_NAME_SIZE)
 #define NB_FILES_IN_DIR (BLOCK_SIZE/FILE_REF_SIZE)
 
+#define MAX_OPEN_FILES  128
+
 
 typedef enum {
     VFS_OK,
@@ -24,6 +26,7 @@ typedef enum {
     VFS_MAX_FD_REACHED,
     VFS_MEMORY_FULL,
     VFS_INVALID_NAME,
+    VFS_NULL_POINTER,
     VFS_UNKWON_ERROR,
 
 } vfs_error;
@@ -70,7 +73,7 @@ vfs_error open_file(const path_t path, fd_t *fd);
  * @param[in] fd File descriptor
  * @return vfs_error 
  */
-vfs_error close_file(const fd_t *fd);
+vfs_error close_file(fd_t *fd);
 
 /**
  * @brief Read a file object
