@@ -6,8 +6,7 @@
 
 #define FS_NPAGES 128
 #define FS_SIZE (FS_NPAGES * BSIZE)
-#define PAGE_SIZE 512*8
-
+#define FILE_MAX_SIZE PAGE_SIZE
 
 #define MAX_SIZE_NAME   16
 #define ROOT_INODE      0
@@ -70,7 +69,7 @@ void init_fs();
  * @param type 
  * @return inode_id
  */
-inode_id alloc_inode(char name[MAX_SIZE_NAME], inode* father, TYPE_FILE type);
+inode_id alloc_inode(const char name[MAX_SIZE_NAME], inode* father, TYPE_FILE type);
 
 /**
  * @brief Destroy a file or folder, return 1 on success return 0 on failure

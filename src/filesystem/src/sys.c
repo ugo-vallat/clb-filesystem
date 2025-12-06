@@ -30,7 +30,7 @@ vfs_error sys_open_file(const path_t path, fd_t *fd) {
 	return open_file(path, fd);
 }
 
-vfs_error sys_close_file(const fd_t *fd) {
+vfs_error sys_close_file(fd_t *fd) {
 	return close_file(fd);
 }
 

@@ -1,7 +1,7 @@
 #include <string.h>
 
 
-char* strcpy(char *dst, char *src)
+char* strcpy(char *dst, const char *src)
 {
     int i = 0;
     while (src[i] != '\0') {
@@ -13,7 +13,7 @@ char* strcpy(char *dst, char *src)
 }
 
 
-char* strcat(char *dst, char *src)
+char* strcat(char *dst, const char *src)
 {
     int i = 0;
     int j = 0;
@@ -34,7 +34,7 @@ char* strcat(char *dst, char *src)
 }
 
 
-int strcmp(char *dst, char *src)
+int strcmp(char *dst, const char *src)
 {
     int i = 0;
     while (dst[i] != '\0' && src[i] != '\0') {
@@ -46,7 +46,7 @@ int strcmp(char *dst, char *src)
 }
 
 
-int strlen(char *src)
+int strlen(const char *src)
 {
     int i = 0;
     while (src[i] != '\0') {

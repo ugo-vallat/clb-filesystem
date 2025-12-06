@@ -2,13 +2,13 @@
 #define __STRING_H__
 
 
-char* strcpy(char *dst, char *src);
+char* strcpy(char *dst, const char *src);
 
-char* strcat(char *dst, char *src);
+char* strcat(char *dst, const char *src);
 
-int strcmp(char *dst, char *src);
+int strcmp(char *dst, const char *src);
 
-int strlen(char *src);
+int strlen(const char *src);
 
 
 #endif // __STRING_H__

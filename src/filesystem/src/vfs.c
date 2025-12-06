@@ -266,9 +266,15 @@ long read_file(const fd_t *fd, char *str, unsigned len) {
     return (long) read_inode(open_files[*fd].inode->id, open_files[*fd].next, len, str);
 }
 
-long write_file(const fd_t *fd, const char *str, unsigned len);
+long write_file(const fd_t *fd, const char *str, unsigned len) {
+    WARN("write_file not implemented yet\n");
+    return -1;
+}
 
-long append_file(fd_t *fd, const char *str, unsigned len);
+long append_file(fd_t *fd, const char *str, unsigned len) {
+    WARN("append_file not implemented yet\n");
+    return -1;
+}
 
 
 /*
@@ -277,9 +283,18 @@ long append_file(fd_t *fd, const char *str, unsigned len);
     -------------------
 */
 
-vfs_error create_dir(path_t path, char *dir);
+vfs_error create_dir(path_t path, char *dir) {
+    WARN("create_dir not implemented yet\n");
+    return VFS_UNKWON_ERROR;
+}
 
-vfs_error delete_dir(path_t dir);
+vfs_error delete_dir(path_t dir) {
+    WARN("delete_dir not implemented yet\n");
+    return VFS_UNKWON_ERROR;
+}
 
-vfs_error read_dir(path_t dir, char **files[FILE_NAME_SIZE], unsigned *nb_entries);
+vfs_error read_dir(path_t dir, char **files[FILE_NAME_SIZE], unsigned *nb_entries) {
+    WARN("read_dir not implemented yet\n");
+    return VFS_UNKWON_ERROR;
+}
 

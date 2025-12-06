@@ -13,7 +13,7 @@ vfs_error sys_create_file(const path_t path, const char *file);
 
 vfs_error sys_delete_file(const path_t path);
 
-vfs_error sys_close_file(const fd_t *fd);
+vfs_error sys_close_file(fd_t *fd);
 
 long sys_read_file(const fd_t *fd, char *str, unsigned len);
 
