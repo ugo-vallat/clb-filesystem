@@ -3,6 +3,7 @@
 #include "utils.h"
 #include "sched.h"
 #include "mm.h"
+#include "sys.h"
 
 
 void sys_write(char * buf){
@@ -17,4 +18,4 @@ void sys_exit(){
 	exit_process();
 }
 
-void * const sys_call_table[] = {sys_write, sys_fork, sys_exit};
+void * const sys_call_table[__NR_syscalls] = {sys_write, sys_fork, sys_exit};
