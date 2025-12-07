@@ -55,7 +55,8 @@ vfs_error sys_delete_dir(path_t dir) {
 }
 
 vfs_error sys_read_dir(path_t dir, char **files[FILE_NAME_SIZE], unsigned *nb_entries) {
-	return read_dir(dir, files, nb_entries);
+	// TODO : use open / get_next_dir_son / close
+    return VFS_UNKWON_ERROR;
 }
 
 void * const sys_call_table[__NR_syscalls] = {

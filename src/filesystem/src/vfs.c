@@ -14,10 +14,11 @@ fd_t get_next_fd(void);
 typedef struct file_descriptor {
     inode* inode;       // inode of the file
     unsigned int next;  // next character to read 
+    inode* next_son;    // next son of the current directory
 } file_descriptor_t;
 
 static char token[MAX_SIZE_NAME+1];
-file_descriptor_t open_files[MAX_OPEN_FILES];
+file_descriptor_t open_inodes[MAX_OPEN_FILES];
 
 int get_path_first_token(const path_t path) {
     
@@ -103,7 +104,7 @@ inode* parse_path(const path_t path) {
 
 fd_t get_next_fd(void) {
     for(fd_t fd = 0; fd < MAX_OPEN_FILES; fd++) {
-        if(0 == open_files[fd].inode) {
+        if(0 == open_inodes[fd].inode) {
             return fd;
         }
     }
@@ -201,14 +202,14 @@ vfs_error open_file(const path_t path, fd_t *fd) {
     
     file = parse_path(path);
     if(0 == file) {
-        return VFS_INVALID_FD;
+        return VFS_INVALID_PATH_FILE;
     }
     if(FILE != file->type) {
         WARN("Not a path to a file\n");
         return VFS_INVALID_FD;
     }
-    open_files[*fd].inode = file;
-    open_files[*fd].next = 0;
+    open_inodes[*fd].inode = file;
+    open_inodes[*fd].next = 0;
     file->ref++;
     return VFS_OK;
 }
@@ -225,14 +226,14 @@ vfs_error close_file(fd_t *fd) {
         return VFS_INVALID_FD;
     }
 
-    if(0 == open_files[*fd].inode) {
+    if(0 == open_inodes[*fd].inode) {
         WARN("File not open\n");
         *fd = -1;
         return VFS_INVALID_FD;
     }
-    open_files[*fd].inode->ref--;
-    open_files[*fd].inode = 0;
-    open_files[*fd].next = 0;
+    open_inodes[*fd].inode->ref--;
+    open_inodes[*fd].inode = 0;
+    open_inodes[*fd].next = 0;
     *fd = -1;
     return VFS_OK;
 }
@@ -248,22 +249,22 @@ long read_file(const fd_t *fd, char *str, unsigned len) {
         return -1;
     }
 
-    if(0 == open_files[*fd].inode) {
+    if(0 == open_inodes[*fd].inode) {
         WARN("File not open\n");
         return -1;
     }
 
-    if(FILE != open_files[*fd].inode->type) {
-        WARN("File not readable\n");
+    if(FILE != open_inodes[*fd].inode->type) {
+        WARN("fd is not a file descriptor\n");
         return -1;
     }
 
-    if(open_files[*fd].next >= open_files[*fd].inode->size || 0 == len) {
+    if(open_inodes[*fd].next >= open_inodes[*fd].inode->size || 0 == len) {
         str[0] = '\0';
         return 0;
     }
 
-    return (long) read_inode(open_files[*fd].inode->id, open_files[*fd].next, len, str);
+    return (long) read_inode(open_inodes[*fd].inode->id, open_inodes[*fd].next, len, str);
 }
 
 long write_file(const fd_t *fd, const char *str, unsigned len) {
@@ -277,22 +278,22 @@ long write_file(const fd_t *fd, const char *str, unsigned len) {
         return -1;
     }
 
-    if(0 == open_files[*fd].inode) {
+    if(0 == open_inodes[*fd].inode) {
         WARN("File not open\n");
         return -1;
     }
 
-    if(FILE != open_files[*fd].inode->type) {
-        WARN("File not readable\n");
+    if(FILE != open_inodes[*fd].inode->type) {
+        WARN("fd is not a file descriptor\n");
         return -1;
     }
 
-    if (0 != reset_inode(open_files[*fd].inode->id)) {
+    if (0 != reset_inode(open_inodes[*fd].inode->id)) {
         WARN("Failed to reset file\n");
         return -1;
     }
 
-    return write_inode(open_files[*fd].inode->id, str, len);
+    return write_inode(open_inodes[*fd].inode->id, str, len);
 }
 
 long append_file(fd_t *fd, const char *str, unsigned len) {
@@ -306,17 +307,17 @@ long append_file(fd_t *fd, const char *str, unsigned len) {
         return -1;
     }
 
-    if(0 == open_files[*fd].inode) {
+    if(0 == open_inodes[*fd].inode) {
         WARN("File not open\n");
         return -1;
     }
 
-    if(FILE != open_files[*fd].inode->type) {
-        WARN("File not readable\n");
+    if(FILE != open_inodes[*fd].inode->type) {
+        WARN("fd is not a file descriptor\n");
         return -1;
     }
 
-    return write_inode(open_files[*fd].inode->id, str, len);
+    return write_inode(open_inodes[*fd].inode->id, str, len);
 }
 
 
@@ -374,8 +375,85 @@ vfs_error delete_dir(path_t path) {
     return VFS_OK;
 }
 
-vfs_error read_dir(path_t dir, char **files[FILE_NAME_SIZE], unsigned *nb_entries) {
-    WARN("read_dir not implemented yet\n");
-    return VFS_UNKWON_ERROR;
+vfs_error open_dir(const path_t path, fd_t *fd) {
+    inode* dir;
+
+    if(0 == fd) {
+        WARN("Null pointer\n");
+        return VFS_NULL_POINTER;
+    }
+
+    *fd = get_next_fd();
+    if(*fd < 0) {
+        *fd = -1;
+        return VFS_MAX_FD_REACHED;
+    }
+    
+    dir = parse_path(path);
+    if(0 == dir) {
+        return VFS_INVALID_PATH_DIR;
+    }
+    if(FOLDER != dir->type) {
+        WARN("Not a path to a file\n");
+        return VFS_INVALID_FD;
+    }
+    open_inodes[*fd].inode = dir;
+    open_inodes[*fd].next_son = dir->first_son;
+    dir->ref++;
+    return VFS_OK;
 }
 
+vfs_error close_dir(fd_t *fd) {
+    if(0 == fd) {
+        WARN("Null pointer\n");
+        return VFS_NULL_POINTER;
+    }
+
+    if(0 > *fd) {
+        WARN("Invalid fd\n");
+        return VFS_INVALID_FD;
+    }
+
+    if(0 == open_inodes[*fd].inode) {
+        WARN("Directory not open\n");
+        *fd = -1;
+        return VFS_INVALID_FD;
+    }
+    open_inodes[*fd].inode->ref--;
+    open_inodes[*fd].inode = 0;
+    open_inodes[*fd].next_son = 0;
+    *fd = -1;
+    return VFS_OK;
+}
+
+vfs_error get_next_dir_son(fd_t *fd, char *son_name) {
+    if(0 == fd || 0 == son_name) {
+        WARN("Null pointer\n");
+        return VFS_NULL_POINTER;
+    }
+
+    if(0 > *fd) {
+        WARN("Invalid fd\n");
+        return VFS_INVALID_FD;
+    }
+
+    if(0 == open_inodes[*fd].inode) {
+        WARN("Directory not open\n");
+        *fd = -1;
+        return VFS_INVALID_FD;
+    }
+
+    if(FOLDER != open_inodes[*fd].inode->type) {
+        WARN("fd is not a folder descriptor\n");
+        return -1;
+    }
+
+    if(0 != open_inodes[*fd].next_son) {
+        strcpy(son_name, open_inodes[*fd].next_son->name);
+        open_inodes[*fd].next_son = open_inodes[*fd].next_son->brother;
+    } else {
+        son_name[0] = '\0';
+    }
+
+    return VFS_OK;
+}
