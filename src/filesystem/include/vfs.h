@@ -131,19 +131,31 @@ vfs_error create_dir(path_t path, char *dir_name);
 vfs_error delete_dir(path_t path);
 
 /**
- * @brief read a dire object, to list current files in the dir
+ * @brief Open a directory object
  * 
- * @param[in] dir Path to the directory to read
- * @param[out] files List of files/directories name's in the directory ()
- * @param[out] nb_entries Number of entries in the file
+ * @param[in] path Absolute path to the directory
+ * @param[out] fd Returned directory descriptor
  * @return vfs_error 
  */
-vfs_error read_dir(path_t dir, char **files[FILE_NAME_SIZE], unsigned *nb_entries);
+vfs_error open_dir(const path_t path, fd_t *fd);
+
+/**
+ * @brief Close a directory object
+ * 
+ * @param[in] fd Directory descriptor
+ * @return vfs_error 
+ */
+vfs_error close_dir(fd_t *fd);
 
 
-
-
-
+/**
+ * @brief Get the next son in the directory
+ * 
+ * @param[in] fd Directory descriptor
+ * @param[out] son_name Name of the next son, empty string if there is no more son
+ * @return vfs_error 
+ */
+vfs_error get_next_dir_son(fd_t *fd, char *son_name);
 
 
 #endif // _VFS_H_
