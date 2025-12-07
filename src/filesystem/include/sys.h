@@ -1,7 +1,7 @@
 #ifndef	_SYS_H
 #define	_SYS_H
 
-#define __NR_syscalls	 13
+#define __NR_syscalls	 15
 
 #ifndef __ASSEMBLER__
 #include "vfs.h"
@@ -25,7 +25,11 @@ vfs_error sys_create_dir(path_t path, char *dir);
 
 vfs_error sys_delete_dir(path_t dir);
 
-vfs_error sys_read_dir(path_t dir, char **files[FILE_NAME_SIZE], unsigned *nb_entries);
+vfs_error sys_open_dir(const path_t path, fd_t *fd);
+
+vfs_error sys_close_dir(fd_t *fd);
+
+vfs_error sys_get_dir_son(fd_t *fd, char *son_name);
 
 #endif
 

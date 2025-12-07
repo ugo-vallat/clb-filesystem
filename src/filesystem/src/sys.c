@@ -54,9 +54,16 @@ vfs_error sys_delete_dir(path_t dir) {
 	return delete_dir(dir);
 }
 
-vfs_error sys_read_dir(path_t dir, char **files[FILE_NAME_SIZE], unsigned *nb_entries) {
-	// TODO : use open / get_next_dir_son / close
-    return VFS_UNKWON_ERROR;
+vfs_error sys_open_dir(const path_t path, fd_t *fd) {
+	return open_dir(path, fd);
+}
+
+vfs_error sys_close_dir(fd_t *fd) {
+	return close_dir(fd);
+}
+
+vfs_error sys_get_dir_son(fd_t *fd, char *son_name) {
+	return get_next_dir_son(fd, son_name);
 }
 
 void * const sys_call_table[__NR_syscalls] = {
@@ -74,5 +81,7 @@ void * const sys_call_table[__NR_syscalls] = {
 
 	sys_create_dir,
 	sys_delete_dir,
-	sys_read_dir
+	sys_open_dir,
+	sys_close_dir,
+	sys_get_dir_son
 };

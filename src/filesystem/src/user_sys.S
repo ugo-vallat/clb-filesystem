@@ -24,19 +24,24 @@
 
 .set SYS_CREATE_DIR_NUMBER, 	10
 .set SYS_DELETE_DIR_NUMBER, 	11
-.set SYS_READ_DIR_NUMBER, 		12
+.set SYS_OPEN_DIR_NUMBER,		12
+.set SYS_CLOSE_DIR_NUMBER,		13
+.set SYS_GET_DIR_SON_NUMBER, 	14
 
-make_syscall call_create_file, SYS_CREATE_FILE_NUMBER
-make_syscall call_delete_file, SYS_DELETE_FILE_NUMBER
-make_syscall call_open_file, SYS_OPEN_FILE_NUMBER
-make_syscall call_close_file, SYS_CLOSE_FILE_NUMBER
-make_syscall call_read_file, SYS_READ_FILE_NUMBER
-make_syscall call_write_file, SYS_WRITE_FILE_NUMBER
-make_syscall call_append_file, SYS_APPEND_FILE_NUMBER
+make_syscall call_create_file, 	SYS_CREATE_FILE_NUMBER
+make_syscall call_delete_file, 	SYS_DELETE_FILE_NUMBER
+make_syscall call_open_file, 	SYS_OPEN_FILE_NUMBER
+make_syscall call_close_file, 	SYS_CLOSE_FILE_NUMBER
+make_syscall call_read_file, 	SYS_READ_FILE_NUMBER
+make_syscall call_write_file, 	SYS_WRITE_FILE_NUMBER
+make_syscall call_append_file, 	SYS_APPEND_FILE_NUMBER
 
-make_syscall call_create_dir, SYS_CREATE_DIR_NUMBER
-make_syscall call_delete_dir, SYS_DELETE_DIR_NUMBER
-make_syscall call_read_dir, SYS_READ_DIR_NUMBER
+make_syscall call_create_dir, 	SYS_CREATE_DIR_NUMBER
+make_syscall call_delete_dir, 	SYS_DELETE_DIR_NUMBER
+make_syscall call_open_dir, 	SYS_OPEN_DIR_NUMBER
+make_syscall call_close_dir, 	SYS_CLOSE_DIR_NUMBER
+make_syscall call_get_dir_son, 	SYS_GET_DIR_SON_NUMBER
+
 
 .globl user_delay
 user_delay:

@@ -16,7 +16,9 @@ void call_append_file();
 
 void call_create_dir();
 void call_delete_dir();
-void call_read_dir();
+void call_open_dir();
+void call_close_dir();
+void call_get_dir_son();
 
 
 extern void user_delay ( unsigned long);

@@ -28,6 +28,9 @@ void user_process()
 	
 	call_create_dir();
 	call_delete_dir();
-	call_read_dir();
+	call_open_dir();
+	call_close_dir();
+	call_get_dir_son();
+
 }
 
