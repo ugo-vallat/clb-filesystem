@@ -436,7 +436,6 @@ vfs_error get_next_dir_son(fd_t *fd, char *son_name) {
         WARN("Invalid fd\n");
         return VFS_INVALID_FD;
     }
-
     if(0 == open_inodes[*fd].inode) {
         WARN("Directory not open\n");
         *fd = -1;

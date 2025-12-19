@@ -1,10 +1,10 @@
 
 
 #define __FILESYSTEM_C__
-#include "../include/filesystem.h" // Don't move this fucking include if u want to stay alive :)
-#include "../include/mm.h"
+#include "filesystem.h" // Don't move this fucking include if u want to stay alive :)
+#include "mm.h"
 #include "string.h"
-
+#include "printf.h"
 
 
 int memwrite(unsigned long src, unsigned long dst, unsigned long n);
@@ -30,7 +30,7 @@ void init_fs() {
 
   //reserve FS_NPAGES for each inode and set root inode
   for (unsigned i = 0; i < FS_NPAGES; i++) {
-    unsigned block = get_free_page();
+    unsigned long block = allocate_kernel_page();
     if (i == 0) {
       strcpy(RAM_inodes_table[i].name, "/");
       RAM_inodes_table[i].type = FOLDER;
@@ -83,26 +83,32 @@ int reset_inode(inode_id inode) {
 }
 
 int write_inode(inode_id inode, const char *data, int size) {
-  if (RAM_inodes_table[inode].type != FILE) {
-    return -1;
-  }
-  unsigned long src = (unsigned long)data;
-  unsigned long dst =
-      RAM_inodes_table[inode].data_block + RAM_inodes_table[inode].size;
+    if (RAM_inodes_table[inode].type != FILE) {
+        return -1;
+    }
+    unsigned long src = (unsigned long)data;
+    unsigned long dst =
+        RAM_inodes_table[inode].data_block + RAM_inodes_table[inode].size;
 
-  int max_size = FILE_MAX_SIZE - RAM_inodes_table[inode].size;
-  if (size > max_size) {
-    size = max_size;
-  }
-  if (size <= 0) {
-    return 0;
-  }
-  int written = memwrite(src, dst, size);
+    int max_size = FILE_MAX_SIZE - RAM_inodes_table[inode].size;
+    if (size > max_size) {
+        size = max_size;
+    }
+    if (size <= 0) {
+        return 0;
+    }
+    // printf("[FS][%s] src  : %s\n", __func__, src);
+    // printf("[FS][%s] dst  : %d%d\n", __func__, dst>>32, dst&0xFFFFFFFF);
+    // printf("[FS][%s] size : %d\n", __func__, size);
+    // printf("[FS][%s] data_block : %d\n", __func__, RAM_inodes_table[inode].data_block);
+    // printf("[FS][%s] size : %d\n", __func__, RAM_inodes_table[inode].size);
+    
+    int written = memwrite(src, dst, size);
+    // printf("[FS][%s] STATE 3\n", __func__);
 
-  RAM_inodes_table[inode].size += written;
+    RAM_inodes_table[inode].size += written;
 
-  return written;
-  return memwrite(src, dst, size);
+    return written;
 }
 
 int read_inode(inode_id inode, int pos, int size, char* buff_dest) {
@@ -144,14 +150,15 @@ int free_inode(inode_id inode) {
 
     if (father->first_son == &RAM_inodes_table[inode]) {
         father->first_son = brother;
-    }
-
-    struct RAM_inode* next_child = father->first_son;
-    while(next_child != (void*)0) {
-      if (next_child->brother == &RAM_inodes_table[inode]) {
-          next_child->brother = brother;
-          break;
-      }
+    } else {
+        struct RAM_inode* next_child = father->first_son;
+        while(next_child != (void*)0) {
+          if (next_child->brother == &RAM_inodes_table[inode]) {
+              next_child->brother = brother;
+              break;
+          }
+          next_child = next_child->brother;
+        }
     }
 
     RAM_inodes_table[inode].brother = (void*)0;

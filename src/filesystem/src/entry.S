@@ -83,7 +83,7 @@
  * Exception vectors.
  */
 .align	11
-.globl vectors
+.global vectors
 vectors:
 	ventry	sync_invalid_el1t			// Synchronous EL1t
 	ventry	irq_invalid_el1t			// IRQ EL1t
@@ -198,7 +198,7 @@ fiq_invalid_el0_32:
 error_invalid_el0_32:
 	handle_invalid_entry  0, ERROR_INVALID_EL0_32
 
-.globl ret_from_fork
+.global ret_from_fork
 ret_from_fork:
 	bl	schedule_tail
 	cbz	x19, ret_to_user			// not a kernel thread
@@ -209,5 +209,5 @@ ret_to_user:
 	kernel_exit 0
 
 
-.globl err_hang
+.global err_hang
 err_hang: b err_hang

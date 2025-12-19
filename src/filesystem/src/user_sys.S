@@ -2,7 +2,7 @@
 
 // Macro pour les appels de syscall simple.
 .macro make_syscall name, num
-    .globl  \name
+    .global  \name
 \name:
     mov     w8, #\num
     svc     #0
@@ -43,25 +43,25 @@ make_syscall call_close_dir, 	SYS_CLOSE_DIR_NUMBER
 make_syscall call_get_dir_son, 	SYS_GET_DIR_SON_NUMBER
 
 
-.globl user_delay
+.global user_delay
 user_delay:
 	subs x0, x0, #1
 	bne user_delay
 	ret
 
-.globl call_sys_write
+.global call_sys_write
 call_sys_write:
 	mov w8, #SYS_WRITE_NUMBER
 	svc #0
 	ret
 
-.globl call_sys_exit
+.global call_sys_exit
 call_sys_exit:
 	mov w8, #SYS_EXIT_NUMBER
 	svc #0
 	ret
 
-.globl call_sys_fork
+.global call_sys_fork
 call_sys_fork:
 	mov w8, #SYS_FORK_NUMBER
 	svc #0

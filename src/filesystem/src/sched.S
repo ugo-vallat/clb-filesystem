@@ -1,6 +1,6 @@
 #include "sched.h"
 
-.globl cpu_switch_to
+.global cpu_switch_to
 cpu_switch_to:
 	mov	x10, #THREAD_CPU_CONTEXT
 	add	x8, x0, x10

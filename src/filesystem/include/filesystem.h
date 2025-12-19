@@ -27,10 +27,10 @@ typedef enum PERMISSION {
 
 typedef struct superblock {
     unsigned size;          //number file system blocks
-    unsigned nbr_block;     //number of data blocks
-    unsigned nbr_inodes;    //number of inodes
-    unsigned first_inode;   //first block for inodes
-    unsigned bitmap;     //first available block for bitmap
+    unsigned long nbr_block;     //number of data blocks
+    unsigned long nbr_inodes;    //number of inodes
+    unsigned long first_inode;   //first block for inodes
+    unsigned long bitmap;     //first available block for bitmap
 } superblock_t;
 
 
@@ -44,7 +44,7 @@ typedef struct RAM_inode {
   struct RAM_inode* brother;
   struct RAM_inode* first_son;
   char name[MAX_SIZE_NAME];
-  unsigned data_block;    //pointer of the Memory block
+  unsigned long data_block;    //pointer of the Memory block
 }inode;
 
 #ifdef __FILESYSTEM_C__

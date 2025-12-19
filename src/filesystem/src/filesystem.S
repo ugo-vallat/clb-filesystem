@@ -1,4 +1,5 @@
-.globl memwrite
+
+.global memwrite
 memwrite:
     mov x4, x2
 b_memewrite:

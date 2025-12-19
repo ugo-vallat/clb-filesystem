@@ -6,13 +6,13 @@
  *  https://developer.arm.com/docs/ddi0487/ca/arm-architecture-reference-manual-armv8-for-armv8-a-architecture-profile
  */
 
-.globl gen_timer_init
+.global gen_timer_init
 gen_timer_init:
   mov x0, #1
   msr CNTP_CTL_EL0, x0
   ret
 
-.globl gen_timer_reset
+.global gen_timer_reset
 gen_timer_reset:
     mov x0, #1
   lsl x0, x0, #24

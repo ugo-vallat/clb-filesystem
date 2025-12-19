@@ -1,26 +1,26 @@
-.globl get_el
+.global get_el
 get_el:
 	mrs x0, CurrentEL
 	lsr x0, x0, #2
 	ret
 
-.globl put32
+.global put32
 put32:
 	str w1,[x0]
 	ret
 
-.globl get32
+.global get32
 get32:
 	ldr w0,[x0]
 	ret
 
-.globl delay
+.global delay
 delay:
 	subs x0, x0, #1
 	bne delay
 	ret
 
-.globl set_pgd
+.global set_pgd
 set_pgd:
 	msr	ttbr0_el1, x0
 	tlbi vmalle1is
@@ -28,7 +28,7 @@ set_pgd:
 	isb
 	ret
 
-.globl get_pgd
+.global get_pgd
 get_pgd:
 	mov x1, 0
 	ldr x0, [x1]
