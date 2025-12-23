@@ -280,7 +280,7 @@ Un processus utilisateur ne peut pas appeler le vfs directement, il doit passer 
 
 ### Syscall côté utilisateur  
 
-L'ensemble des syscall utilisables par un processus sont définis dans `user_sys.h/.S` : 
+L'ensemble des syscalls utilisables par un processus sont définis dans `user_sys.h/.S` : 
 
 ```c
 vfs_error call_create_file(const path_t path, const char *file);
@@ -310,7 +310,8 @@ La macro assembleur suivante permet de factoriser le code de définition des sys
     .endm
 ```
 
-La macro `make_syscall` est ensuite appelée pour chaque appel système disponnible :  
+Celle-ci déclenche une interruption synchrone en utilisant l'instruction `svc` après avoir placé le numéro du syscall dans le registre `w8` qui correspond à son numéro et dont le registre w8 (ou x8) est réservé à cet usage lors d'appel système. 
+La macro `make_syscall` est ensuite appelée pour chaque appel système disponible :  
 
 ```asm
 .set SYS_CREATE_FILE_NUMBER, 	3
@@ -373,8 +374,8 @@ el0_sync:
 	...
 ```
 
-Ce handler utilise alors le numéro d'interruption (argument 8) pour déterminer le syscall appelé, le recherche dans la table des 
-syscall et l'appel :
+Ce handler utilise alors le numéro d'interruption (passé dans le registre w8) pour déterminer l'appel système utilisé, le recherche dans la table des 
+syscalls et l'appel :
 
 ```asm
 sc_nr	.req	x25					// number of system calls
@@ -394,7 +395,7 @@ el0_svc:
 	...
 ```
 
-Les syscall côté système et la table associée sont définit dans `sys.h/.c` : 
+Les syscalls côté système et la table associée sont définit dans `sys.h/.c` : 
 
 ```c
 vfs_error sys_create_file(const path_t path, const char *file);
@@ -429,9 +430,10 @@ void * const sys_call_table[__NR_syscalls] = {
 	sys_get_dir_son
 };
 ```
-Enfin, les syscall appellent les fonctions du vfs définies dans la première partie.  
 
-## Comparaison avec le vfs de linux  
+Enfin, les syscalls appellent les fonctions du vfs définies dans la première partie.  
+
+## Comparaison avec le VFS de Linux  
 
 Outre la complexité bien suppérieur du vfs de Linux et le nombre de fonctionnalités supplémentaires, notre vfs diffère grandement sur son approche.  
 
