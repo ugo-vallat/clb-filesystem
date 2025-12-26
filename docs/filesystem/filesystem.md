@@ -259,7 +259,19 @@ On ne développe pas un exercice,
 mais une mini architecture noyau.
 
 
-## 10. Conclusion
+## 10.  Exemples de filesystem connus
+Pour mieux situer le RAMFS et le VFS par rapport aux systèmes existants, il est utile de citer quelques filesystem largement utilisés dans les OS modernes.
+### ext4
+ext4 est une architecture de filesystem par défaut sur une bonne parties des distributions Linux.
+Ses points forts, c'est qu'il est très robuste (il utilise en plus des inodes et des blocs, des tables d'allocation optimisées), il a une bonne gestion des gros volumes et qu'il a une récupération après crash très fiable (il enregistre les opérations critiques dans un journal avant des les appliquer réellement).
+
+### FAT32
+FAT32 est une architecture de filesystem historique, encore très répandu pour les supports amovibles classiques comme les clés USB ou encore les cartes SD.
+Ses points forts, c'est qu'il est extrêmement simple (il repose sur une table d'allocation unique (FAT) qui indique pour chaque bloc, le bloc suivant, donc pas d'inodes, pas de journal), sa simplicité lui donne un faible coût en calcul et en mémoire, et enfin il est facile de l'implémenter dans un noyau ou un firmware.
+
+
+
+## 11. Conclusion
 
 Ce projet met en œuvre bien plus qu’un simple système de fichiers en mémoire. 
 Il propose une approche réaliste de l’architecture d’un sous-système noyau en s’appuyant sur une séparation claire entre l’API, le VFS et l’implémentation RAMFS.
