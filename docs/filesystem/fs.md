@@ -161,10 +161,48 @@ int read_inode(inode_id inode, int pos, int size, char* buff_dest) {
 - Taille maximale d’un fichier limitée à une page mémoire (`FILE_MAX_SIZE`)
 
 - écriture 
-//à rajouter
+
+```
+int write_inode(inode_id inode, const char *data, int size) {
+    if (RAM_inodes_table[inode].type != FILE) {
+        return -1;
+    }
+    unsigned long src = (unsigned long)data;
+    unsigned long dst =
+        RAM_inodes_table[inode].data_block + RAM_inodes_table[inode].size;
+
+    int max_size = FILE_MAX_SIZE - RAM_inodes_table[inode].size;
+    if (size > max_size) {
+        size = max_size;
+    }
+    if (size <= 0) {
+        return 0;
+    }
+    
+    int written = memwrite(src, dst, size);
+    RAM_inodes_table[inode].size += written;
+
+    return written;
+}
+```
 
 - Supréssion totale du contenu du fichier
-//à rajouter
+
+```
+int reset_inode(inode_id inode) {
+  if (RAM_inodes_table[inode].type != FILE) {
+    return -1;
+  }
+
+  RAM_inodes_table[inode].size = 0;
+  return 0;
+}
+```
+
+Pour supprimer le contenu d'un fichier, on remet le size a 0.
+
+On ne supprime pas reelement les données en memoire. 
+
 
 ### Gestion mémoire
 - Chaque inode possède un bloc mémoire dédié (tableau global -> donc en section .data)
