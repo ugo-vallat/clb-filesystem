@@ -4,6 +4,7 @@
 #include "printf.h"
 #include "vfs.h"
 
+
 #define ROOT            "/"
 #define TVFS_FILE1_NAME "file1.txt"
 #define TVFS_FILE2_NAME "file2.txt"
@@ -239,7 +240,11 @@ void user_process()
 {
     fd_t fd; 
     char buff[TVFS_STRING_SIZE*4+1];
-	call_sys_write("User process, starting the call to the VFS :\n\r");
+
+	
+    call_sys_write("User process, starting the call to the VFS :\n\r");
+
+
 
     /*_________________FILE_________________*/
 
@@ -279,7 +284,13 @@ void user_process()
     test_get_next_dir_son(&fd, buff);
     test_get_next_dir_son(&fd, buff);
     test_close_dir(&fd);
-    
-    while(1);
+    call_sys_write("\r\n THE END");
+
+    while(1) {
+        call_sys_write(".");
+        for(int i = 0; i < 5000000; i++) {
+        }
+    } 
+
 }
 

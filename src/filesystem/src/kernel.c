@@ -29,14 +29,19 @@ void kernel_main()
 {
 	uart_init();
 	init_printf(NULL, putc);
-	init_fs();
 	printf("kernel boots ...\n\r");
-
+    init_fs();
+    printf("FS init OK\n\r");
+    
 	irq_vector_init();
+    printf("Vector init OK\n\r");
 	timer_init();
+    printf("Timer init OK\n\r");
 //	generic_timer_init();
 	enable_interrupt_controller();
+    printf("Interrupt init OK\n\r");
 	enable_irq();
+    printf("IRQ enable OK\n\r");
 
 	int res = copy_process(PF_KTHREAD, (unsigned long)&kernel_process, 0);
 	if (res < 0) {
