@@ -18,7 +18,6 @@ src/*/build
 
 *.json
 
-*.pdf
 
 .project
 .cproject
